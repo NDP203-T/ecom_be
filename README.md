@@ -1,61 +1,117 @@
 # E-Commerce Flask API
 
-Dự án e-commerce API sử dụng Flask, PostgreSQL, Redis, Cloudinary và Docker.
+Dự án e-commerce API sử dụng Flask, PostgreSQL, Cloudinary và Docker.
 
 ## Tính năng
 
 - Xác thực người dùng (JWT)
 - Quản lý sản phẩm (CRUD)
-- Giỏ hàng (Redis cache)
+- Giỏ hàng
 - Đặt hàng
 - Upload ảnh sản phẩm (Cloudinary)
 
-## Cài đặt
+## Cài đặt và chạy
 
-1. Copy file cấu hình:
+### 1. Cấu hình môi trường
+
 ```bash
 cp .env.example .env
 ```
 
-2. Cập nhật thông tin Cloudinary trong file `.env`
+Sửa file `.env` với thông tin của bạn (đặc biệt là Cloudinary credentials)
 
-3. Chạy với Docker:
+### 2. Chạy với Docker (Khuyến nghị)
+
 ```bash
+# Khởi động Docker Desktop trước
+
+# Build và chạy
 docker-compose up -d
+
+# Xem logs
+docker-compose logs -f app
 ```
 
-4. Tạo database tables:
+Database sẽ tự động được khởi tạo khi container start!
+
+### 3. Chạy local (không dùng Docker)
+
 ```bash
-docker-compose exec app flask db init
-docker-compose exec app flask db migrate
-docker-compose exec app flask db upgrade
+# Cài đặt dependencies
+pip install -r requirements.txt
+
+# Khởi tạo database
+python init_db.py
+
+# Chạy app
+python run.py
 ```
+
+## Database Management
+
+pgAdmin: `http://localhost:5050`
+- Email: `admin@admin.com`
+- Password: `admin`
+
+Kết nối database trong pgAdmin:
+- Host: `postgres` (hoặc `localhost` nếu kết nối từ máy local)
+- Port: `5432`
+- Database: `ecom_db`
+- Username: `ecom_user`
+- Password: `ecom_pass`
+
+## API Documentation
+
+Swagger UI: `http://localhost:5000/api/docs`
 
 ## API Endpoints
 
 ### Auth
-- POST `/api/auth/register` - Đăng ký
-- POST `/api/auth/login` - Đăng nhập
-- GET `/api/auth/me` - Thông tin user (cần JWT)
+- `POST /api/auth/register` - Đăng ký
+  ```json
+  {
+    "email": "user@example.com",
+    "password": "password123",
+    "full_name": "John Doe"
+  }
+  ```
 
-### Products
-- GET `/api/products` - Danh sách sản phẩm
-- GET `/api/products/<id>` - Chi tiết sản phẩm
-- POST `/api/products` - Tạo sản phẩm (cần JWT)
-
-### Cart
-- GET `/api/cart` - Xem giỏ hàng (cần JWT)
-- POST `/api/cart/add` - Thêm vào giỏ (cần JWT)
-- DELETE `/api/cart/remove/<id>` - Xóa khỏi giỏ (cần JWT)
-
-### Orders
-- POST `/api/orders` - Tạo đơn hàng (cần JWT)
-- GET `/api/orders` - Danh sách đơn hàng (cần JWT)
+- `POST /api/auth/login` - Đăng nhập
+  ```json
+  {
+    "email": "user@example.com",
+    "password": "password123"
+  }
+  ```
 
 ## Tech Stack
 
-- Flask
-- PostgreSQL
-- Redis
+- Flask 3.0
+- PostgreSQL 15
 - Cloudinary
-- Docker
+- Docker & Docker Compose
+- JWT Authentication
+
+## Cấu trúc project
+
+```
+app/
+├── controllers/     # Business logic
+├── models/         # Database models
+├── routes/         # API endpoints
+├── services/       # Reusable services
+├── middleware/     # Validation, security
+└── swagger/        # API documentation
+```
+
+## Git Commit Convention
+
+Dự án sử dụng Conventional Commits. Xem chi tiết tại [COMMIT_CONVENTION.md](COMMIT_CONVENTION.md)
+
+**Examples:**
+```bash
+git commit -m "feat: add user registration"
+git commit -m "fix: resolve login validation error"
+git commit -m "docs: update API documentation"
+```
+
