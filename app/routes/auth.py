@@ -37,5 +37,5 @@ def login():
 @jwt_required(refresh=True)
 def refresh():
     user_id = get_jwt_identity()
-    access_token, _ = AuthController.refresh_token(user_id)
-    return jsonify({'access_token': access_token}), 200
+    result, status_code = AuthController.refresh_token(user_id)
+    return jsonify(result), status_code

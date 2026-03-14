@@ -112,4 +112,4 @@ class AuthController:
             expires_delta=timedelta(hours=1)
         )
         
-        return access_token, None
+        return {'access_token': access_token}, 200
