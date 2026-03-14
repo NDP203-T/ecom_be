@@ -42,8 +42,9 @@ def create_app():
     app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
     
     # Routes
-    from app.routes import auth
+    from app.routes import auth, decrypt
     app.register_blueprint(auth.bp)
+    app.register_blueprint(decrypt.bp)
     
     # Serve swagger.json
     @app.route('/static/swagger.json')

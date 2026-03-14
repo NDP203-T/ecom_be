@@ -47,11 +47,50 @@ python init_db.py
 python run.py
 ```
 
-## Database Management
+## Response Encryption
 
-pgAdmin: `http://localhost:5050`
-- Email: `admin@admin.com`
-- Password: `admin`
+**Tất cả auth endpoints đều mã hóa response tự động.**
+
+Response có dạng:
+```json
+{
+  "encrypted": true,
+  "data": "base64_encrypted_string..."
+}
+```
+
+### Giải mã ở Frontend
+
+**JavaScript (Browser):**
+```javascript
+// Xem file client-example.html
+```
+
+**Node.js:**
+```javascript
+// Xem file client-example.js
+const { decryptData } = require('./client-example.js');
+
+const response = await fetch('/api/auth/login', {...});
+const result = await response.json();
+
+if (result.encrypted) {
+    const decrypted = decryptData(result.data);
+    console.log(decrypted);
+}
+```
+
+**Python:**
+```python
+from app.utils.encryption import EncryptionUtil
+
+encrypted_data = response['data']
+decrypted = EncryptionUtil.decrypt_data(encrypted_data)
+```
+
+Chi tiết xem [ENCRYPTION.md](ENCRYPTION.md)
+
+## Database Management
 
 Kết nối database trong pgAdmin:
 - Host: `postgres` (hoặc `localhost` nếu kết nối từ máy local)

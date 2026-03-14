@@ -2,11 +2,13 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.controllers.auth_controller import AuthController
 from app.middleware.validation import validate_json
+from app.middleware.encryption import encrypt_response
 
 bp = Blueprint('auth', __name__, url_prefix='/api/auth')
 
 @bp.route('/register', methods=['POST'])
 @validate_json('email', 'password')
+@encrypt_response()
 def register():
     data = request.get_json()
     result, status_code = AuthController.register(data)
@@ -14,6 +16,7 @@ def register():
 
 @bp.route('/verify-otp', methods=['POST'])
 @validate_json('email', 'code')
+@encrypt_response()
 def verify_otp():
     data = request.get_json()
     result, status_code = AuthController.verify_otp(data)
@@ -21,6 +24,7 @@ def verify_otp():
 
 @bp.route('/resend-otp', methods=['POST'])
 @validate_json('email')
+@encrypt_response()
 def resend_otp():
     data = request.get_json()
     result, status_code = AuthController.resend_otp(data)
@@ -28,6 +32,7 @@ def resend_otp():
 
 @bp.route('/login', methods=['POST'])
 @validate_json('email', 'password')
+@encrypt_response()
 def login():
     data = request.get_json()
     result, status_code = AuthController.login(data)
@@ -35,6 +40,7 @@ def login():
 
 @bp.route('/refresh', methods=['POST'])
 @jwt_required(refresh=True)
+@encrypt_response()
 def refresh():
     user_id = get_jwt_identity()
     result, status_code = AuthController.refresh_token(user_id)
