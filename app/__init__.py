@@ -3,14 +3,15 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
-import redis
+from flask_mail import Mail
+from flask_swagger_ui import get_swaggerui_blueprint
 import cloudinary
 from config import Config
 
 db = SQLAlchemy()
 migrate = Migrate()
 jwt = JWTManager()
-redis_client = None
+mail = Mail()
 
 def create_app():
     app = Flask(__name__)
@@ -20,9 +21,7 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app, db)
     jwt.init_app(app)
-    
-    global redis_client
-    redis_client = redis.from_url(app.config['REDIS_URL'])
+    mail.init_app(app)
     
     cloudinary.config(
         cloud_name=app.config['CLOUDINARY_CLOUD_NAME'],
@@ -30,10 +29,28 @@ def create_app():
         api_secret=app.config['CLOUDINARY_API_SECRET']
     )
     
-    from app.routes import auth, products, cart, orders
+    # Swagger UI
+    SWAGGER_URL = '/api/docs'
+    API_URL = '/static/swagger.json'
+    swaggerui_blueprint = get_swaggerui_blueprint(
+        SWAGGER_URL,
+        API_URL,
+        config={
+            'app_name': "E-Commerce API"
+        }
+    )
+    app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
+    
+    # Routes
+    from app.routes import auth
     app.register_blueprint(auth.bp)
-    app.register_blueprint(products.bp)
-    app.register_blueprint(cart.bp)
-    app.register_blueprint(orders.bp)
+    
+    # Serve swagger.json
+    @app.route('/static/swagger.json')
+    def swagger_json():
+        from flask import send_file
+        import os
+        swagger_path = os.path.join(app.root_path, 'swagger', 'swagger.json')
+        return send_file(swagger_path)
     
     return app

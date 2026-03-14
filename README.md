@@ -105,9 +105,6 @@ app/
 ```
 
 ## Git Commit Convention
-
-Dự án sử dụng Conventional Commits. Xem chi tiết tại [COMMIT_CONVENTION.md](COMMIT_CONVENTION.md)
-
 **Examples:**
 ```bash
 git commit -m "feat: add user registration"

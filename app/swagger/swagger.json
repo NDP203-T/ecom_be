@@ -2,51 +2,23 @@
   "openapi": "3.0.0",
   "info": {
     "title": "E-Commerce API",
-    "description": "API documentation for E-Commerce Flask application",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "API documentation for E-Commerce Flask application"
   },
-  "servers": [
-    {
-      "url": "http://localhost:5000",
-      "description": "Development server"
-    }
-  ],
+  "servers": [{"url": "http://localhost:5000"}],
   "components": {
     "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer",
-        "bearerFormat": "JWT"
-      }
+      "bearerAuth": {"type": "http", "scheme": "bearer", "bearerFormat": "JWT"}
     },
     "schemas": {
       "User": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid",
-            "example": "550e8400-e29b-41d4-a716-446655440000"
-          },
-          "email": {
-            "type": "string",
-            "format": "email"
-          },
-          "full_name": {
-            "type": "string"
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          }
-        }
-      },
-      "Error": {
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "string"
-          }
+          "id": {"type": "string"},
+          "email": {"type": "string"},
+          "full_name": {"type": "string"},
+          "is_verified": {"type": "boolean"},
+          "created_at": {"type": "string"}
         }
       }
     }
@@ -54,128 +26,86 @@
   "paths": {
     "/api/auth/register": {
       "post": {
-        "tags": ["Authentication"],
-        "summary": "Register a new user",
-        "description": "Create a new user account",
+        "tags": ["Auth"],
+        "summary": "Register user",
         "requestBody": {
-          "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
                 "required": ["email", "password"],
                 "properties": {
-                  "email": {
-                    "type": "string",
-                    "format": "email",
-                    "example": "user@example.com"
-                  },
-                  "password": {
-                    "type": "string",
-                    "minLength": 6,
-                    "example": "password123"
-                  },
-                  "full_name": {
-                    "type": "string",
-                    "example": "John Doe"
-                  }
+                  "email": {"type": "string", "example": "user@example.com"},
+                  "password": {"type": "string", "example": "password123"},
+                  "full_name": {"type": "string", "example": "John Doe"}
                 }
               }
             }
           }
         },
-        "responses": {
-          "201": {
-            "description": "User registered successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string"
-                    },
-                    "user": {
-                      "$ref": "#/components/schemas/User"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
+        "responses": {"201": {"description": "Registered, OTP sent"}}
+      }
+    },
+    "/api/auth/verify-otp": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Verify OTP",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "code"],
+                "properties": {
+                  "email": {"type": "string", "example": "user@example.com"},
+                  "code": {"type": "string", "example": "123456"}
                 }
               }
             }
           }
-        }
+        },
+        "responses": {"200": {"description": "Verified"}}
+      }
+    },
+    "/api/auth/resend-otp": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Resend OTP",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email"],
+                "properties": {
+                  "email": {"type": "string", "example": "user@example.com"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {"200": {"description": "OTP sent"}}
       }
     },
     "/api/auth/login": {
       "post": {
-        "tags": ["Authentication"],
-        "summary": "Login user",
-        "description": "Authenticate user and get access token",
+        "tags": ["Auth"],
+        "summary": "Login",
         "requestBody": {
-          "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
                 "required": ["email", "password"],
                 "properties": {
-                  "email": {
-                    "type": "string",
-                    "format": "email",
-                    "example": "user@example.com"
-                  },
-                  "password": {
-                    "type": "string",
-                    "example": "password123"
-                  }
+                  "email": {"type": "string", "example": "user@example.com"},
+                  "password": {"type": "string", "example": "password123"}
                 }
               }
             }
           }
         },
-        "responses": {
-          "200": {
-            "description": "Login successful",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string"
-                    },
-                    "access_token": {
-                      "type": "string"
-                    },
-                    "user": {
-                      "$ref": "#/components/schemas/User"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Invalid credentials",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
+        "responses": {"200": {"description": "Login successful"}}
       }
     }
   }
