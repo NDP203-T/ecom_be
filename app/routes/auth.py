@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.controllers.auth_controller import AuthController
 from app.middleware.validation import validate_json
 
@@ -31,3 +32,10 @@ def login():
     data = request.get_json()
     result, status_code = AuthController.login(data)
     return jsonify(result), status_code
+
+@bp.route('/refresh', methods=['POST'])
+@jwt_required(refresh=True)
+def refresh():
+    user_id = get_jwt_identity()
+    access_token, _ = AuthController.refresh_token(user_id)
+    return jsonify({'access_token': access_token}), 200

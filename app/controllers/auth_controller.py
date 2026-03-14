@@ -91,11 +91,25 @@ class AuthController:
         if not user.is_verified:
             return {'error': 'Please verify your email first'}, 403
         
-        # Tạo access token
-        access_token = AuthService.generate_token(user.id)
+        # Tạo access token và refresh token
+        access_token, refresh_token = AuthService.generate_tokens(user.id)
         
         return {
             'message': 'Login successful',
             'access_token': access_token,
+            'refresh_token': refresh_token,
             'user': user.to_dict()
         }, 200
+
+    @staticmethod
+    def refresh_token(user_id):
+        """Làm mới access token"""
+        from flask_jwt_extended import create_access_token
+        from datetime import timedelta
+        
+        access_token = create_access_token(
+            identity=user_id,
+            expires_delta=timedelta(hours=1)
+        )
+        
+        return access_token, None

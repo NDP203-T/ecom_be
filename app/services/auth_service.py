@@ -1,4 +1,4 @@
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, create_refresh_token
 from datetime import timedelta
 from app import db
 from app.models import User
@@ -30,9 +30,14 @@ class AuthService:
         return user.check_password(password)
     
     @staticmethod
-    def generate_token(user_id, expires_hours=24):
-        """Tạo JWT token"""
-        return create_access_token(
+    def generate_tokens(user_id):
+        """Tạo access token và refresh token"""
+        access_token = create_access_token(
             identity=user_id,
-            expires_delta=timedelta(hours=expires_hours)
+            expires_delta=timedelta(hours=1)
         )
+        refresh_token = create_refresh_token(
+            identity=user_id,
+            expires_delta=timedelta(days=30)
+        )
+        return access_token, refresh_token
