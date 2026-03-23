@@ -17,6 +17,7 @@
           "id": {"type": "string"},
           "email": {"type": "string"},
           "full_name": {"type": "string"},
+          "role": {"type": "string"},
           "is_verified": {"type": "boolean"},
           "created_at": {"type": "string"}
         }
@@ -106,6 +107,109 @@
           }
         },
         "responses": {"200": {"description": "Login successful"}}
+      }
+    },
+    "/api/auth/refresh": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Refresh token",
+        "security": [{"bearerAuth": []}],
+        "responses": {"200": {"description": "Token refreshed"}}
+      }
+    },
+    "/api/dashboard/overview": {
+      "get": {
+        "tags": ["Dashboard"],
+        "summary": "Get dashboard overview (Admin only)",
+        "security": [{"bearerAuth": []}],
+        "responses": {
+          "200": {
+            "description": "Dashboard data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "overview": {
+                      "type": "object",
+                      "properties": {
+                        "total_revenue": {"type": "number"},
+                        "today_revenue": {"type": "number"},
+                        "today_orders": {"type": "integer"},
+                        "total_orders": {"type": "integer"},
+                        "total_users": {"type": "integer"}
+                      }
+                    },
+                    "top_products": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {"type": "string"},
+                          "name": {"type": "string"},
+                          "price": {"type": "number"},
+                          "total_sold": {"type": "integer"}
+                        }
+                      }
+                    },
+                    "revenue_chart": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "date": {"type": "string"},
+                          "revenue": {"type": "number"}
+                        }
+                      }
+                    },
+                    "encrypted": {"type": "boolean"}
+                  }
+                }
+              }
+            }
+          },
+          "403": {"description": "Admin access required"}
+        }
+      }
+    },
+    "/api/decrypt/test": {
+      "post": {
+        "tags": ["Decrypt Helper"],
+        "summary": "Decrypt single value",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["encrypted_value"],
+                "properties": {
+                  "encrypted_value": {"type": "string", "example": "gAAAAABh5K8_..."}
+                }
+              }
+            }
+          }
+        },
+        "responses": {"200": {"description": "Decrypted value"}}
+      }
+    },
+    "/api/decrypt/response": {
+      "post": {
+        "tags": ["Decrypt Helper"],
+        "summary": "Decrypt entire response",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["response"],
+                "properties": {
+                  "response": {"type": "object", "description": "Encrypted response object"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {"200": {"description": "Decrypted response"}}
       }
     }
   }

@@ -42,9 +42,10 @@ def create_app():
     app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
     
     # Routes
-    from app.routes import auth, decrypt
+    from app.routes import auth, decrypt, dashboard
     app.register_blueprint(auth.bp)
     app.register_blueprint(decrypt.bp)
+    app.register_blueprint(dashboard.bp)
     
     # Serve swagger.json
     @app.route('/static/swagger.json')
@@ -53,5 +54,11 @@ def create_app():
         import os
         swagger_path = os.path.join(app.root_path, 'swagger', 'swagger.json')
         return send_file(swagger_path)
+    
+    # Decrypt helper page
+    @app.route('/decrypt')
+    def decrypt_page():
+        from flask import render_template
+        return render_template('decrypt.html')
     
     return app

@@ -10,6 +10,23 @@ Dự án e-commerce API sử dụng Flask, PostgreSQL, Cloudinary và Docker.
 - Đặt hàng
 - Upload ảnh sản phẩm (Cloudinary)
 
+## Default Admin Account
+
+Khi khởi động lần đầu, hệ thống tự động tạo admin account:
+
+```
+Email: admin@ecommerce.com
+Password: Admin@123456
+```
+
+**⚠️ QUAN TRỌNG:** Đổi password ngay sau lần đăng nhập đầu tiên!
+
+Để thay đổi admin mặc định, cập nhật trong `.env`:
+```
+ADMIN_EMAIL=your-admin@email.com
+ADMIN_PASSWORD=YourSecurePassword
+```
+
 ## Cài đặt và chạy
 
 ### 1. Cấu hình môi trường
@@ -46,6 +63,17 @@ python init_db.py
 # Chạy app
 python run.py
 ```
+
+## API Documentation
+
+Swagger UI: `http://localhost:5000/api/docs`
+
+**Decrypt Helper:** `http://localhost:5000/decrypt`
+
+Trang web để giải mã response từ Swagger. Chỉ cần:
+1. Nhập SECRET_KEY
+2. Copy/paste response từ Swagger
+3. Click Decrypt
 
 ## Response Encryption
 
