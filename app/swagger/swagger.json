@@ -19,6 +19,7 @@
           "full_name": {"type": "string"},
           "role": {"type": "string"},
           "is_verified": {"type": "boolean"},
+          "is_active": {"type": "boolean"},
           "created_at": {"type": "string"}
         }
       }
@@ -210,6 +211,172 @@
           }
         },
         "responses": {"200": {"description": "Decrypted response"}}
+      }
+    },
+    "/api/users": {
+      "get": {
+        "tags": ["User Management"],
+        "summary": "Get all users (Admin only)",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {"type": "integer", "default": 1}
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "schema": {"type": "integer", "default": 10}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "users": {
+                      "type": "array",
+                      "items": {"$ref": "#/components/schemas/User"}
+                    },
+                    "total": {"type": "integer"},
+                    "page": {"type": "integer"},
+                    "per_page": {"type": "integer"},
+                    "total_pages": {"type": "integer"}
+                  }
+                }
+              }
+            }
+          },
+          "403": {"description": "Admin access required"}
+        }
+      }
+    },
+    "/api/users/{user_id}": {
+      "get": {
+        "tags": ["User Management"],
+        "summary": "Get user by ID (Admin only)",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "string"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user": {"$ref": "#/components/schemas/User"}
+                  }
+                }
+              }
+            }
+          },
+          "404": {"description": "User not found"}
+        }
+      }
+    },
+    "/api/users/{user_id}/toggle-status": {
+      "put": {
+        "tags": ["User Management"],
+        "summary": "Lock/Unlock user account (Admin only)",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "string"}
+          }
+        ],
+        "responses": {
+          "200": {"description": "User status toggled"},
+          "400": {"description": "Cannot lock/unlock own account"},
+          "404": {"description": "User not found"}
+        }
+      }
+    },
+    "/api/users/{user_id}/role": {
+      "put": {
+        "tags": ["User Management"],
+        "summary": "Update user role (Admin only)",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "string"}
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["role"],
+                "properties": {
+                  "role": {
+                    "type": "string",
+                    "enum": ["ADMIN", "USER"],
+                    "example": "ADMIN"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Role updated"},
+          "400": {"description": "Invalid role or cannot change own role"},
+          "404": {"description": "User not found"}
+        }
+      }
+    },
+    "/api/users/{user_id}/reset-password": {
+      "put": {
+        "tags": ["User Management"],
+        "summary": "Reset user password (Admin only)",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "string"}
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["new_password"],
+                "properties": {
+                  "new_password": {
+                    "type": "string",
+                    "example": "newpassword123"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Password reset successfully"},
+          "400": {"description": "Invalid password"},
+          "404": {"description": "User not found"}
+        }
       }
     }
   }

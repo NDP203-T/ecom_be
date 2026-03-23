@@ -8,7 +8,7 @@ bp = Blueprint('dashboard', __name__, url_prefix='/api/dashboard')
 
 @bp.route('/overview', methods=['GET'])
 @jwt_required()
-@admin_required()
+@admin_required
 @encrypt_response()
 def get_overview():
     """Lấy tổng quan dashboard - Chỉ admin"""

@@ -87,6 +87,10 @@ class AuthController:
         if not user or not AuthService.verify_password(user, data['password']):
             return {'error': 'Invalid email or password'}, 401
         
+        # Kiểm tra tài khoản có bị khóa không
+        if not user.is_active:
+            return {'error': 'Account is locked. Please contact administrator'}, 403
+        
         # Kiểm tra email đã verify chưa
         if not user.is_verified:
             return {'error': 'Please verify your email first'}, 403

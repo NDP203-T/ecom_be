@@ -12,6 +12,7 @@ class User(db.Model):
     full_name = db.Column(db.String(100))
     role = db.Column(db.String(20), default='user')  # 'user' hoặc 'admin'
     is_verified = db.Column(db.Boolean, default=False)
+    is_active = db.Column(db.Boolean, default=True)  # Trạng thái tài khoản (khóa/mở)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     def set_password(self, password):
@@ -30,6 +31,7 @@ class User(db.Model):
             'full_name': self.full_name,
             'role': self.role,
             'is_verified': self.is_verified,
+            'is_active': self.is_active,
             'created_at': self.created_at.isoformat()
         }
 
