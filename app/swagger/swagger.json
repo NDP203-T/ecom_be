@@ -22,6 +22,52 @@
           "is_active": {"type": "boolean"},
           "created_at": {"type": "string"}
         }
+      },
+      "Product": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "string"},
+          "name": {"type": "string"},
+          "sku": {"type": "string"},
+          "description": {"type": "string"},
+          "price": {"type": "number"},
+          "stock": {"type": "integer"},
+          "image_url": {"type": "string"},
+          "category": {"type": "string"},
+          "is_active": {"type": "boolean"},
+          "created_at": {"type": "string"},
+          "updated_at": {"type": "string"}
+        }
+      },
+      "ProductVariant": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "string"},
+          "product_id": {"type": "string"},
+          "sku": {"type": "string"},
+          "name": {"type": "string"},
+          "color": {"type": "string"},
+          "size": {"type": "string"},
+          "price": {"type": "number"},
+          "stock": {"type": "integer"},
+          "image_url": {"type": "string"},
+          "is_active": {"type": "boolean"}
+        }
+      },
+      "Category": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "string"},
+          "name": {"type": "string"},
+          "slug": {"type": "string"},
+          "description": {"type": "string"},
+          "image_url": {"type": "string"},
+          "parent_id": {"type": "string"},
+          "sort_order": {"type": "integer"},
+          "is_active": {"type": "boolean"},
+          "created_at": {"type": "string"},
+          "updated_at": {"type": "string"}
+        }
       }
     }
   },
@@ -376,6 +422,367 @@
           "200": {"description": "Password reset successfully"},
           "400": {"description": "Invalid password"},
           "404": {"description": "User not found"}
+        }
+      }
+    },
+    "/api/products": {
+      "get": {
+        "tags": ["Product Management"],
+        "summary": "Get all products (Public)",
+        "parameters": [
+          {"name": "page", "in": "query", "schema": {"type": "integer", "default": 1}},
+          {"name": "per_page", "in": "query", "schema": {"type": "integer", "default": 20}},
+          {"name": "category", "in": "query", "schema": {"type": "string"}},
+          {"name": "is_active", "in": "query", "schema": {"type": "boolean"}}
+        ],
+        "responses": {
+          "200": {
+            "description": "List of products",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "products": {"type": "array", "items": {"$ref": "#/components/schemas/Product"}},
+                    "total": {"type": "integer"},
+                    "page": {"type": "integer"},
+                    "per_page": {"type": "integer"},
+                    "total_pages": {"type": "integer"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/products/add": {
+      "post": {
+        "tags": ["Product Management"],
+        "summary": "Create product (Admin only)",
+        "security": [{"bearerAuth": []}],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "price"],
+                "properties": {
+                  "name": {"type": "string", "example": "iPhone 15 Pro"},
+                  "sku": {"type": "string", "example": "IP15PRO-BLK"},
+                  "description": {"type": "string"},
+                  "price": {"type": "number", "example": 999.99},
+                  "stock": {"type": "integer", "example": 100},
+                  "image_url": {"type": "string"},
+                  "category": {"type": "string", "example": "Electronics"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {"description": "Product created"},
+          "400": {"description": "Validation error"}
+        }
+      }
+    },
+    "/api/products/{product_id}": {
+      "get": {
+        "tags": ["Product Management"],
+        "summary": "Get product by ID (Public)",
+        "parameters": [
+          {"name": "product_id", "in": "path", "required": true, "schema": {"type": "string"}}
+        ],
+        "responses": {
+          "200": {"description": "Product details"},
+          "404": {"description": "Product not found"}
+        }
+      },
+      "put": {
+        "tags": ["Product Management"],
+        "summary": "Update product (Admin only)",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {"name": "product_id", "in": "path", "required": true, "schema": {"type": "string"}}
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {"type": "string"},
+                  "sku": {"type": "string"},
+                  "description": {"type": "string"},
+                  "price": {"type": "number"},
+                  "stock": {"type": "integer"},
+                  "category": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Product updated"},
+          "404": {"description": "Product not found"}
+        }
+      },
+      "delete": {
+        "tags": ["Product Management"],
+        "summary": "Delete product (Admin only)",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {"name": "product_id", "in": "path", "required": true, "schema": {"type": "string"}}
+        ],
+        "responses": {
+          "200": {"description": "Product deleted"},
+          "404": {"description": "Product not found"}
+        }
+      }
+    },
+    "/api/products/{product_id}/toggle-status": {
+      "put": {
+        "tags": ["Product Management"],
+        "summary": "Toggle product visibility (Admin only)",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {"name": "product_id", "in": "path", "required": true, "schema": {"type": "string"}}
+        ],
+        "responses": {
+          "200": {"description": "Status toggled"}
+        }
+      }
+    },
+    "/api/products/{product_id}/stock": {
+      "put": {
+        "tags": ["Product Management"],
+        "summary": "Update product stock (Admin only)",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {"name": "product_id", "in": "path", "required": true, "schema": {"type": "string"}}
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["stock"],
+                "properties": {
+                  "stock": {"type": "integer", "example": 50}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Stock updated"}
+        }
+      }
+    },
+    "/api/products/{product_id}/images": {
+      "post": {
+        "tags": ["Product Management"],
+        "summary": "Upload product image (Admin only)",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {"name": "product_id", "in": "path", "required": true, "schema": {"type": "string"}}
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": ["image"],
+                "properties": {
+                  "image": {"type": "string", "format": "binary"},
+                  "is_primary": {"type": "boolean"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {"description": "Image uploaded"}
+        }
+      }
+    },
+    "/api/products/{product_id}/variants": {
+      "post": {
+        "tags": ["Product Management"],
+        "summary": "Create product variant (Admin only)",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {"name": "product_id", "in": "path", "required": true, "schema": {"type": "string"}}
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["sku", "name"],
+                "properties": {
+                  "sku": {"type": "string", "example": "IP15PRO-BLK-256"},
+                  "name": {"type": "string", "example": "Black - 256GB"},
+                  "color": {"type": "string", "example": "Black"},
+                  "size": {"type": "string", "example": "256GB"},
+                  "price": {"type": "number", "example": 1099.99},
+                  "stock": {"type": "integer", "example": 50}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {"description": "Variant created"}
+        }
+      }
+    },
+    "/api/categories": {
+      "get": {
+        "tags": ["Category Management"],
+        "summary": "Get all categories (Public)",
+        "parameters": [
+          {"name": "include_children", "in": "query", "schema": {"type": "boolean", "default": false}},
+          {"name": "only_parents", "in": "query", "schema": {"type": "boolean", "default": false}},
+          {"name": "is_active", "in": "query", "schema": {"type": "boolean"}}
+        ],
+        "responses": {
+          "200": {
+            "description": "List of categories",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "categories": {"type": "array", "items": {"$ref": "#/components/schemas/Category"}},
+                    "total": {"type": "integer"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/categories/tree": {
+      "get": {
+        "tags": ["Category Management"],
+        "summary": "Get category tree with hierarchy (Public)",
+        "responses": {
+          "200": {
+            "description": "Category tree"
+          }
+        }
+      }
+    },
+    "/api/categories/add": {
+      "post": {
+        "tags": ["Category Management"],
+        "summary": "Create category (Admin only)",
+        "security": [{"bearerAuth": []}],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "slug"],
+                "properties": {
+                  "name": {"type": "string", "example": "Electronics"},
+                  "slug": {"type": "string", "example": "electronics"},
+                  "description": {"type": "string"},
+                  "image_url": {"type": "string"},
+                  "parent_id": {"type": "string"},
+                  "sort_order": {"type": "integer", "example": 1}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {"description": "Category created"},
+          "400": {"description": "Validation error"}
+        }
+      }
+    },
+    "/api/categories/{category_id}": {
+      "get": {
+        "tags": ["Category Management"],
+        "summary": "Get category by ID (Public)",
+        "parameters": [
+          {"name": "category_id", "in": "path", "required": true, "schema": {"type": "string"}},
+          {"name": "include_children", "in": "query", "schema": {"type": "boolean", "default": true}}
+        ],
+        "responses": {
+          "200": {"description": "Category details"},
+          "404": {"description": "Category not found"}
+        }
+      },
+      "put": {
+        "tags": ["Category Management"],
+        "summary": "Update category (Admin only)",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {"name": "category_id", "in": "path", "required": true, "schema": {"type": "string"}}
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {"type": "string"},
+                  "slug": {"type": "string"},
+                  "description": {"type": "string"},
+                  "parent_id": {"type": "string"},
+                  "sort_order": {"type": "integer"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Category updated"},
+          "404": {"description": "Category not found"}
+        }
+      },
+      "delete": {
+        "tags": ["Category Management"],
+        "summary": "Delete category (Admin only)",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {"name": "category_id", "in": "path", "required": true, "schema": {"type": "string"}}
+        ],
+        "responses": {
+          "200": {"description": "Category deleted"},
+          "400": {"description": "Cannot delete category with children"},
+          "404": {"description": "Category not found"}
+        }
+      }
+    },
+    "/api/categories/slug/{slug}": {
+      "get": {
+        "tags": ["Category Management"],
+        "summary": "Get category by slug (Public)",
+        "parameters": [
+          {"name": "slug", "in": "path", "required": true, "schema": {"type": "string"}},
+          {"name": "include_children", "in": "query", "schema": {"type": "boolean", "default": true}}
+        ],
+        "responses": {
+          "200": {"description": "Category details"},
+          "404": {"description": "Category not found"}
+        }
+      }
+    },
+    "/api/categories/{category_id}/toggle-status": {
+      "put": {
+        "tags": ["Category Management"],
+        "summary": "Toggle category visibility (Admin only)",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {"name": "category_id", "in": "path", "required": true, "schema": {"type": "string"}}
+        ],
+        "responses": {
+          "200": {"description": "Status toggled"}
         }
       }
     }
