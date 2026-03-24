@@ -1,26 +1,23 @@
-app = "ecommerce-api"
-primary_region = "sin"
+# fly.toml app configuration file generated for ecom-be on 2026-03-24T22:22:31Z
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
 
-[env]
-  PORT = "8080"
-  FLASK_ENV = "production"
+app = 'ecom-be'
+primary_region = 'nrt'
+
+[build]
 
 [http_service]
   internal_port = 8080
   force_https = true
-  auto_stop_machines = true
+  auto_stop_machines = 'stop'
   auto_start_machines = true
   min_machines_running = 0
-  processes = ["app"]
-
-[[http_service.checks]]
-  interval = "10s"
-  timeout = "2s"
-  grace_period = "5s"
-  method = "GET"
-  path = "/api/docs"
+  processes = ['app']
 
 [[vm]]
-  cpu_kind = "shared"
+  memory = '1gb'
+  cpu_kind = 'shared'
   cpus = 1
-  memory_mb = 256
+  memory_mb = 1024
