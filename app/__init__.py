@@ -54,10 +54,13 @@ def create_app():
     # Serve swagger.json
     @app.route('/static/swagger.json')
     def swagger_json():
-        from flask import send_file
+        from flask import jsonify
         import os
+        import json
         swagger_path = os.path.join(app.root_path, 'swagger', 'swagger.json')
-        return send_file(swagger_path)
+        with open(swagger_path, 'r') as f:
+            swagger_data = json.load(f)
+        return jsonify(swagger_data)
     
     # Decrypt helper page
     @app.route('/decrypt')
