@@ -18,5 +18,14 @@ COPY . .
 # Expose port (Fly.io uses 8080)
 EXPOSE 8080
 
-# Run with gunicorn (production-ready)
-CMD ["gunicorn", "run:app", "--bind", "0.0.0.0:8080", "--workers", "2", "--timeout", "120", "--access-logfile", "-", "--error-logfile", "-"]
+# Create entrypoint script
+RUN echo '#!/bin/bash\n\
+set -e\n\
+echo "Initializing database..."\n\
+python init_db.py\n\
+echo "Starting application..."\n\
+exec gunicorn run:app --bind 0.0.0.0:8080 --workers 2 --timeout 120 --access-logfile - --error-logfile -\n\
+' > /app/entrypoint.sh && chmod +x /app/entrypoint.sh
+
+# Run with entrypoint
+CMD ["/app/entrypoint.sh"]
