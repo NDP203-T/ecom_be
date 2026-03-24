@@ -5,7 +5,10 @@
     "version": "1.0.0",
     "description": "API documentation for E-Commerce Flask application"
   },
-  "servers": [{"url": "http://localhost:5000"}],
+  "servers": [
+    {"url": "https://ecom-be.fly.dev/", "description": "Production (Fly.io)"},
+    {"url": "http://localhost:5000", "description": "Local Development"}
+  ],
   "components": {
     "securitySchemes": {
       "bearerAuth": {"type": "http", "scheme": "bearer", "bearerFormat": "JWT"}
