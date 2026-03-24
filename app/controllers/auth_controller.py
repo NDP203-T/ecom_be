@@ -1,6 +1,7 @@
 from app.services.auth_service import AuthService
 from app.services.otp_service import OTPService
 from app.services.email_service import EmailService
+from app.services.google_oauth_service import GoogleOAuthService
 import logging
 
 logger = logging.getLogger(__name__)
@@ -117,3 +118,39 @@ class AuthController:
         )
         
         return {'access_token': access_token}, 200
+
+    @staticmethod
+    def google_login(data):
+        """Đăng nhập bằng Google"""
+        token = data.get('token')
+        
+        if not token:
+            return {'error': 'Google token is required'}, 400
+        
+        # Verify Google token
+        user_info = GoogleOAuthService.verify_google_token(token)
+        
+        if not user_info:
+            return {'error': 'Invalid Google token'}, 401
+        
+        # Tạo hoặc lấy user
+        user = GoogleOAuthService.get_or_create_user(user_info)
+        
+        if not user:
+            return {'error': 'Failed to create user'}, 500
+        
+        # Kiểm tra tài khoản có bị khóa không
+        if not user.is_active:
+            return {'error': 'Account is locked. Please contact administrator'}, 403
+        
+        # Tạo access token và refresh token
+        access_token, refresh_token = AuthService.generate_tokens(user.id)
+        
+        logger.info(f"User logged in via Google: {user.email}")
+        
+        return {
+            'message': 'Login successful',
+            'access_token': access_token,
+            'refresh_token': refresh_token,
+            'user': user.to_dict()
+        }, 200

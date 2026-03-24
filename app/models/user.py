@@ -8,17 +8,26 @@ class User(db.Model):
     
     id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     email = db.Column(db.String(120), unique=True, nullable=False, index=True)
-    password_hash = db.Column(db.String(255), nullable=False)
+    password_hash = db.Column(db.String(255), nullable=True)  # Nullable cho OAuth users
     full_name = db.Column(db.String(100))
     role = db.Column(db.String(20), default='user')  # 'user' hoặc 'admin'
     is_verified = db.Column(db.Boolean, default=False)
     is_active = db.Column(db.Boolean, default=True)  # Trạng thái tài khoản (khóa/mở)
+    
+    # OAuth fields
+    oauth_provider = db.Column(db.String(50))  # 'google', 'facebook', etc.
+    oauth_id = db.Column(db.String(255))  # ID từ OAuth provider
+    avatar_url = db.Column(db.String(500))  # Avatar từ OAuth
+    
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
+        if password:
+            self.password_hash = generate_password_hash(password)
     
     def check_password(self, password):
+        if not self.password_hash:
+            return False
         return check_password_hash(self.password_hash, password)
     
     def is_admin(self):
@@ -32,6 +41,8 @@ class User(db.Model):
             'role': self.role,
             'is_verified': self.is_verified,
             'is_active': self.is_active,
+            'oauth_provider': self.oauth_provider,
+            'avatar_url': self.avatar_url,
             'created_at': self.created_at.isoformat()
         }
 

@@ -37,3 +37,8 @@ class Config:
     MAIL_DEFAULT_SENDER = os.getenv('MAIL_DEFAULT_SENDER')
     MAIL_MAX_EMAILS = None
     MAIL_ASCII_ATTACHMENTS = False
+    
+    # Google OAuth
+    GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
+    GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET')
+    GOOGLE_DISCOVERY_URL = "https://accounts.google.com/.well-known/openid-configuration"

@@ -20,6 +20,8 @@
           "role": {"type": "string"},
           "is_verified": {"type": "boolean"},
           "is_active": {"type": "boolean"},
+          "oauth_provider": {"type": "string"},
+          "avatar_url": {"type": "string"},
           "created_at": {"type": "string"}
         }
       },
@@ -67,6 +69,40 @@
           "is_active": {"type": "boolean"},
           "created_at": {"type": "string"},
           "updated_at": {"type": "string"}
+        }
+      },
+      "Order": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "string"},
+          "order_number": {"type": "string"},
+          "user_id": {"type": "string"},
+          "customer_name": {"type": "string"},
+          "customer_phone": {"type": "string"},
+          "customer_email": {"type": "string"},
+          "shipping_address": {"type": "string"},
+          "payment_method": {"type": "string"},
+          "payment_status": {"type": "string"},
+          "subtotal": {"type": "number"},
+          "shipping_fee": {"type": "number"},
+          "discount": {"type": "number"},
+          "total_amount": {"type": "number"},
+          "status": {"type": "string"},
+          "created_at": {"type": "string"}
+        }
+      },
+      "OrderItem": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "string"},
+          "product_id": {"type": "string"},
+          "variant_id": {"type": "string"},
+          "product_name": {"type": "string"},
+          "variant_name": {"type": "string"},
+          "sku": {"type": "string"},
+          "quantity": {"type": "integer"},
+          "price": {"type": "number"},
+          "subtotal": {"type": "number"}
         }
       }
     }
@@ -154,6 +190,48 @@
           }
         },
         "responses": {"200": {"description": "Login successful"}}
+      }
+    },
+    "/api/auth/google": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Login with Google",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["token"],
+                "properties": {
+                  "token": {
+                    "type": "string",
+                    "description": "Google ID token from frontend",
+                    "example": "eyJhbGciOiJSUzI1NiIsImtpZCI6..."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {"type": "string"},
+                    "access_token": {"type": "string"},
+                    "refresh_token": {"type": "string"},
+                    "user": {"$ref": "#/components/schemas/User"}
+                  }
+                }
+              }
+            }
+          },
+          "401": {"description": "Invalid Google token"}
+        }
       }
     },
     "/api/auth/refresh": {
@@ -783,6 +861,206 @@
         ],
         "responses": {
           "200": {"description": "Status toggled"}
+        }
+      }
+    },
+    "/api/orders": {
+      "post": {
+        "tags": ["Order Management"],
+        "summary": "Create new order (User)",
+        "security": [{"bearerAuth": []}],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["items", "customer_name", "customer_phone", "shipping_address"],
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": ["product_id", "quantity"],
+                      "properties": {
+                        "product_id": {"type": "string"},
+                        "variant_id": {"type": "string"},
+                        "quantity": {"type": "integer", "example": 2}
+                      }
+                    }
+                  },
+                  "customer_name": {"type": "string", "example": "Nguyen Van A"},
+                  "customer_phone": {"type": "string", "example": "0901234567"},
+                  "customer_email": {"type": "string", "example": "user@example.com"},
+                  "shipping_address": {"type": "string", "example": "123 Nguyen Hue"},
+                  "shipping_city": {"type": "string", "example": "Ho Chi Minh"},
+                  "shipping_district": {"type": "string", "example": "District 1"},
+                  "shipping_ward": {"type": "string", "example": "Ward 1"},
+                  "payment_method": {"type": "string", "enum": ["cash"], "default": "cash"},
+                  "shipping_fee": {"type": "number", "example": 30000},
+                  "discount": {"type": "number", "example": 0},
+                  "note": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {"description": "Order created successfully"},
+          "400": {"description": "Validation error or insufficient stock"}
+        }
+      }
+    },
+    "/api/orders/my-orders": {
+      "get": {
+        "tags": ["Order Management"],
+        "summary": "Get user's orders (User)",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {"name": "page", "in": "query", "schema": {"type": "integer", "default": 1}},
+          {"name": "per_page", "in": "query", "schema": {"type": "integer", "default": 10}}
+        ],
+        "responses": {
+          "200": {"description": "List of user orders"}
+        }
+      }
+    },
+    "/api/orders/{order_id}": {
+      "get": {
+        "tags": ["Order Management"],
+        "summary": "Get order details (User)",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {"name": "order_id", "in": "path", "required": true, "schema": {"type": "string"}}
+        ],
+        "responses": {
+          "200": {"description": "Order details"},
+          "403": {"description": "Access denied"},
+          "404": {"description": "Order not found"}
+        }
+      }
+    },
+    "/api/orders/number/{order_number}": {
+      "get": {
+        "tags": ["Order Management"],
+        "summary": "Get order by order number (User)",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {"name": "order_number", "in": "path", "required": true, "schema": {"type": "string", "example": "ORD-20240101-0001"}}
+        ],
+        "responses": {
+          "200": {"description": "Order details"},
+          "404": {"description": "Order not found"}
+        }
+      }
+    },
+    "/api/orders/{order_id}/cancel": {
+      "put": {
+        "tags": ["Order Management"],
+        "summary": "Cancel order (User)",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {"name": "order_id", "in": "path", "required": true, "schema": {"type": "string"}}
+        ],
+        "responses": {
+          "200": {"description": "Order cancelled"},
+          "400": {"description": "Cannot cancel order"}
+        }
+      }
+    },
+    "/api/orders/admin/all": {
+      "get": {
+        "tags": ["Order Management - Admin"],
+        "summary": "Get all orders (Admin only)",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {"name": "page", "in": "query", "schema": {"type": "integer", "default": 1}},
+          {"name": "per_page", "in": "query", "schema": {"type": "integer", "default": 20}},
+          {"name": "status", "in": "query", "schema": {"type": "string", "enum": ["pending", "confirmed", "processing", "shipping", "delivered", "completed", "cancelled"]}}
+        ],
+        "responses": {
+          "200": {"description": "List of all orders"}
+        }
+      }
+    },
+    "/api/orders/admin/{order_id}": {
+      "get": {
+        "tags": ["Order Management - Admin"],
+        "summary": "Get order details (Admin only)",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {"name": "order_id", "in": "path", "required": true, "schema": {"type": "string"}}
+        ],
+        "responses": {
+          "200": {"description": "Order details"}
+        }
+      }
+    },
+    "/api/orders/admin/{order_id}/status": {
+      "put": {
+        "tags": ["Order Management - Admin"],
+        "summary": "Update order status (Admin only)",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {"name": "order_id", "in": "path", "required": true, "schema": {"type": "string"}}
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["status"],
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": ["pending", "confirmed", "processing", "shipping", "delivered", "completed", "cancelled"],
+                    "example": "confirmed"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Status updated"}
+        }
+      }
+    },
+    "/api/orders/admin/{order_id}/note": {
+      "put": {
+        "tags": ["Order Management - Admin"],
+        "summary": "Update admin note (Admin only)",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {"name": "order_id", "in": "path", "required": true, "schema": {"type": "string"}}
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["note"],
+                "properties": {
+                  "note": {"type": "string", "example": "Customer requested express delivery"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Note updated"}
+        }
+      }
+    },
+    "/api/orders/admin/{order_id}/cancel": {
+      "put": {
+        "tags": ["Order Management - Admin"],
+        "summary": "Cancel order (Admin only)",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {"name": "order_id", "in": "path", "required": true, "schema": {"type": "string"}}
+        ],
+        "responses": {
+          "200": {"description": "Order cancelled"}
         }
       }
     }

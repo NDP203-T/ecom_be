@@ -45,3 +45,13 @@ def refresh():
     user_id = get_jwt_identity()
     result, status_code = AuthController.refresh_token(user_id)
     return jsonify(result), status_code
+
+
+@bp.route('/google', methods=['POST'])
+@validate_json('token')
+@encrypt_response()
+def google_login():
+    """Đăng nhập bằng Google"""
+    data = request.get_json()
+    result, status_code = AuthController.google_login(data)
+    return jsonify(result), status_code
