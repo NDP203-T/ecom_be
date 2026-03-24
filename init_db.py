@@ -54,9 +54,10 @@ def seed_sample_data():
             'price': 1199.99,
             'stock': 50,
             'category': 'Smartphones',
+            'image_url': 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=500',
             'variants': [
-                {'sku': 'IP15PM-256-BLK', 'name': 'Black Titanium - 256GB', 'color': 'Black', 'size': '256GB', 'price': 1199.99, 'stock': 20},
-                {'sku': 'IP15PM-512-BLU', 'name': 'Blue Titanium - 512GB', 'color': 'Blue', 'size': '512GB', 'price': 1399.99, 'stock': 15},
+                {'sku': 'IP15PM-256-BLK', 'name': 'Black Titanium - 256GB', 'color': 'Black', 'size': '256GB', 'price': 1199.99, 'stock': 20, 'image_url': 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=500'},
+                {'sku': 'IP15PM-512-BLU', 'name': 'Blue Titanium - 512GB', 'color': 'Blue', 'size': '512GB', 'price': 1399.99, 'stock': 15, 'image_url': 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=500'},
             ]
         },
         {
@@ -66,9 +67,10 @@ def seed_sample_data():
             'price': 1299.99,
             'stock': 40,
             'category': 'Smartphones',
+            'image_url': 'https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=500',
             'variants': [
-                {'sku': 'SGS24U-256-GRY', 'name': 'Titanium Gray - 256GB', 'color': 'Gray', 'size': '256GB', 'price': 1299.99, 'stock': 20},
-                {'sku': 'SGS24U-512-BLK', 'name': 'Titanium Black - 512GB', 'color': 'Black', 'size': '512GB', 'price': 1499.99, 'stock': 20},
+                {'sku': 'SGS24U-256-GRY', 'name': 'Titanium Gray - 256GB', 'color': 'Gray', 'size': '256GB', 'price': 1299.99, 'stock': 20, 'image_url': 'https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=500'},
+                {'sku': 'SGS24U-512-BLK', 'name': 'Titanium Black - 512GB', 'color': 'Black', 'size': '512GB', 'price': 1499.99, 'stock': 20, 'image_url': 'https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=500'},
             ]
         },
         # Laptops
@@ -79,9 +81,10 @@ def seed_sample_data():
             'price': 3499.99,
             'stock': 25,
             'category': 'Laptops',
+            'image_url': 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=500',
             'variants': [
-                {'sku': 'MBP16-M3MAX-36-1TB', 'name': '36GB RAM - 1TB SSD', 'size': '36GB/1TB', 'price': 3499.99, 'stock': 15},
-                {'sku': 'MBP16-M3MAX-48-2TB', 'name': '48GB RAM - 2TB SSD', 'size': '48GB/2TB', 'price': 4299.99, 'stock': 10},
+                {'sku': 'MBP16-M3MAX-36-1TB', 'name': '36GB RAM - 1TB SSD', 'size': '36GB/1TB', 'price': 3499.99, 'stock': 15, 'image_url': 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=500'},
+                {'sku': 'MBP16-M3MAX-48-2TB', 'name': '48GB RAM - 2TB SSD', 'size': '48GB/2TB', 'price': 4299.99, 'stock': 10, 'image_url': 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=500'},
             ]
         },
         {
@@ -91,6 +94,7 @@ def seed_sample_data():
             'price': 2499.99,
             'stock': 30,
             'category': 'Laptops',
+            'image_url': 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=500',
         },
         # Audio
         {
@@ -100,6 +104,7 @@ def seed_sample_data():
             'price': 249.99,
             'stock': 100,
             'category': 'Audio',
+            'image_url': 'https://images.unsplash.com/photo-1606841837239-c5a1a4a07af7?w=500',
         },
         {
             'name': 'Sony WH-1000XM5',
@@ -108,9 +113,10 @@ def seed_sample_data():
             'price': 399.99,
             'stock': 60,
             'category': 'Audio',
+            'image_url': 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=500',
             'variants': [
-                {'sku': 'SONY-WH1000XM5-BLK', 'name': 'Black', 'color': 'Black', 'price': 399.99, 'stock': 30},
-                {'sku': 'SONY-WH1000XM5-SLV', 'name': 'Silver', 'color': 'Silver', 'price': 399.99, 'stock': 30},
+                {'sku': 'SONY-WH1000XM5-BLK', 'name': 'Black', 'color': 'Black', 'price': 399.99, 'stock': 30, 'image_url': 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=500'},
+                {'sku': 'SONY-WH1000XM5-SLV', 'name': 'Silver', 'color': 'Silver', 'price': 399.99, 'stock': 30, 'image_url': 'https://images.unsplash.com/photo-1545127398-14699f92334b?w=500'},
             ]
         },
         # Tablets
@@ -121,9 +127,10 @@ def seed_sample_data():
             'price': 1099.99,
             'stock': 35,
             'category': 'Tablets',
+            'image_url': 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=500',
             'variants': [
-                {'sku': 'IPADPRO-129-256-WIFI', 'name': '256GB WiFi', 'size': '256GB WiFi', 'price': 1099.99, 'stock': 20},
-                {'sku': 'IPADPRO-129-512-CELL', 'name': '512GB Cellular', 'size': '512GB Cellular', 'price': 1499.99, 'stock': 15},
+                {'sku': 'IPADPRO-129-256-WIFI', 'name': '256GB WiFi', 'size': '256GB WiFi', 'price': 1099.99, 'stock': 20, 'image_url': 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=500'},
+                {'sku': 'IPADPRO-129-512-CELL', 'name': '512GB Cellular', 'size': '512GB Cellular', 'price': 1499.99, 'stock': 15, 'image_url': 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=500'},
             ]
         },
         # Smartwatches
@@ -134,6 +141,7 @@ def seed_sample_data():
             'price': 799.99,
             'stock': 45,
             'category': 'Smartwatches',
+            'image_url': 'https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=500',
         },
         {
             'name': 'Samsung Galaxy Watch 6',
@@ -142,9 +150,10 @@ def seed_sample_data():
             'price': 349.99,
             'stock': 55,
             'category': 'Smartwatches',
+            'image_url': 'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=500',
             'variants': [
-                {'sku': 'SGW6-44-BLK', 'name': 'Black - 44mm', 'color': 'Black', 'size': '44mm', 'price': 349.99, 'stock': 30},
-                {'sku': 'SGW6-40-SLV', 'name': 'Silver - 40mm', 'color': 'Silver', 'size': '40mm', 'price': 329.99, 'stock': 25},
+                {'sku': 'SGW6-44-BLK', 'name': 'Black - 44mm', 'color': 'Black', 'size': '44mm', 'price': 349.99, 'stock': 30, 'image_url': 'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=500'},
+                {'sku': 'SGW6-40-SLV', 'name': 'Silver - 40mm', 'color': 'Silver', 'size': '40mm', 'price': 329.99, 'stock': 25, 'image_url': 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500'},
             ]
         },
         # Cameras
@@ -155,6 +164,7 @@ def seed_sample_data():
             'price': 2499.99,
             'stock': 20,
             'category': 'Cameras',
+            'image_url': 'https://images.unsplash.com/photo-1606980707986-e660c1e1d0f8?w=500',
         },
         {
             'name': 'Canon EOS R6 Mark II',
@@ -163,6 +173,7 @@ def seed_sample_data():
             'price': 2399.99,
             'stock': 18,
             'category': 'Cameras',
+            'image_url': 'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=500',
         },
     ]
     
