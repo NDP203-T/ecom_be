@@ -2,18 +2,21 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
+# Install dependencies
 RUN apt-get update && apt-get install -y \
     gcc \
     postgresql-client \
     && rm -rf /var/lib/apt/lists/*
 
+# Copy requirements and install
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Copy application code
 COPY . .
 
-# Đảm bảo entrypoint.sh có quyền thực thi
-RUN chmod +x /app/entrypoint.sh
+# Expose port (Fly.io uses 8080)
+EXPOSE 8080
 
-ENTRYPOINT ["/app/entrypoint.sh"]
-CMD ["python", "run.py"]
+# Run with gunicorn (production-ready)
+CMD ["gunicorn", "run:app", "--bind", "0.0.0.0:8080", "--workers", "2", "--timeout", "120", "--access-logfile", "-", "--error-logfile", "-"]
